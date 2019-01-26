@@ -1,6 +1,7 @@
 use std::fmt;
 
 use mime::{self, Mime};
+use util::IterExt;
 
 /// `Content-Type` header, defined in
 /// [RFC7231](http://tools.ietf.org/html/rfc7231#section-3.1.1.5)
@@ -101,7 +102,7 @@ impl ::Header for ContentType {
 
     fn decode<'i, I: Iterator<Item = &'i ::HeaderValue>>(values: &mut I) -> Result<Self, ::Error> {
         values
-            .next()
+            .just_one()
             .and_then(|v| v.to_str().ok()?.parse().ok())
             .map(ContentType)
             .ok_or_else(::Error::invalid)
